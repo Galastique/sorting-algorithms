@@ -18,9 +18,8 @@ function endSort(runtime, generate){
     if(generate){
         text = "Successfully generated arrays";
     }else{
-        text = "";
+        text = "Sucessfully sorted arrays";
     }
-
     console.log(`\x1b[32m${text} (${runtime}s)\x1b[0m`);
 }
 
@@ -28,9 +27,7 @@ function endSort(runtime, generate){
 //Writes data to files
 function csv(value, type){  
     //Creates directory  
-    if(!fs.existsSync("./output/")){
-        fs.mkdirSync("./output/", {recursive: true});
-    }
+    createDirectiory("output");
 
     //Appends data to file
     if(type == "Array generation"){
@@ -48,12 +45,26 @@ function arrays(arrays){
 
 
 //Writes array outputs
-function createFile(inOut, size, data){
-    fs.writeFileSync(`./${inOut}put/${size}_numbers.csv`, data);
+function createDirectiory(dir){
+    if(!fs.existsSync(`./${dir}`)){
+        fs.mkdirSync(`./${dir}`, {recursive: true});
+    }
 }
 
-function appendFile(inOut, size, data){
-    fs.appendFileSync(`./${inOut}put/${size}_numbers.csv`, data);
+function createFile(inOut, path, size){
+    if(path != null){
+        fs.writeFileSync(`./${inOut}put/${path}/${size}.csv`, "");
+    }else{
+        fs.writeFileSync(`./${inOut}put/${size}.csv`, "");
+    }
+}
+
+function appendFile(inOut, path, size, data){
+    if(path != null){
+        fs.appendFileSync(`./${inOut}put/${path}/${size}.csv`, data);
+    }else{
+        fs.appendFileSync(`./${inOut}put/${size}.csv`, data);
+    }
 }
 
 
@@ -72,6 +83,7 @@ module.exports = {
     midSort,
     endSort,
     csv,
+    createDirectiory,
     createFile,
     appendFile,
     arrays

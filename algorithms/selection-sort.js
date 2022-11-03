@@ -1,18 +1,23 @@
 const fs = require('fs');
+const log = require("../utility/logging.js");
+const time = require("../utility/time.js");
+const sortName = "selection-sort";
+const sortNameLog = "Selection sort";
 
 function start(nFiles){
     let tStart = performance.now();
-    let arrays = JSON.parse(fs.readFileSync("./arrays/arrays.json"));
-
-    console.log("\n\x1b[34mSelection sort: \x1b[0m");
-    fs.appendFileSync(`./stats.csv`, "Selection sort,");
+    const arrays = JSON.parse(fs.readFileSync("./input/arrays.json"));
+    log.createDirectiory("output/selection-sort");
+    log.csv(null, `${sortNameLog}`);
+    log.startSort(`${sortNameLog}`);
 
     //For each array
     for(let i = 0; i < nFiles; i++){
         let start = performance.now();
-        let array = fs.readFileSync(`./arrays/${arrays[i]}`, {encoding:'utf8', flag:'r'}).split(",").map(function(x) {return parseInt(x, 10)});
+        let array = fs.readFileSync(`./input/${arrays[i]}`, {encoding:'utf8', flag:'r'}).split(",").map(function(x) {return parseInt(x, 10)});
 
-        //For each index
+        //For each index in array
+        log.createFile("out", `${sortName}`, `${array.length}`);
         for(let j = 0; j < array.length - 1; j++){
             let index = j;
 
@@ -31,32 +36,16 @@ function start(nFiles){
 
         //Logs data
         let end = performance.now();
-        
-        if(!check(array)){
-            console.log(`\x1b[31mError sorting array\x1b[0m`);
-        }
-
-        console.log(`Array ${i + 1} of ${nFiles} sorted - ${Math.round((end - start) / 1000)}s`);
-        fs.appendFileSync(`./stats.csv`, `${Math.round((end - start) / 1000)},`);
+        let runtime = time.calculate(start, end);
+        log.midSort(i, nFiles, runtime, false);
+        log.appendFile("out", `${sortName}`, `${array.length}`, array.toString());
+        log.csv(runtime);
     }
 
     let tEnd = performance.now();
-
-    console.log(`\x1b[32mSuccessfully sorted arrays (${Math.round((tEnd - tStart) / 1000)}s)\x1b[0m`);
-    fs.appendFileSync(`./stats.csv`, `${Math.round((tEnd - tStart) / 1000)},\n`);
-}
-
-//Checks if array is sorted
-function check(array){
-    let sorted = true;
-
-    for(let i = 0; i < array.length - 1; i++){
-        if(array[i] > array[i + 1]){
-            sorted = false;
-        }
-    }
-
-    return sorted;
+    let runtime = time.calculate(tStart, tEnd);
+    log.endSort(runtime, false);
+    log.csv(`${runtime}\n`);
 }
 
 module.exports = {start}

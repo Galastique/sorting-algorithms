@@ -4,11 +4,11 @@ const time = require("./utility/time.js");
 
 //Generates array to sort
 function start(nFiles){
-    createDirectiory();
     let tStart = performance.now();
-    let arrays = [];
-    log.startSort("Generating arrays");
+    let listOfArrays = [];
+    log.createDirectiory("input");
     log.csv(null, "Array generation");
+    log.startSort("Generating arrays");
 
     //For every n file
     for(let i = 0; i < nFiles; i++){
@@ -20,16 +20,17 @@ function start(nFiles){
         if(size.toString().length % 2 == 1 && size != 1){
             size++;
         }
-        arrays.push(`${size}_numbers.csv`);
+        listOfArrays.push(`${size}_numbers.csv`);
 
         //Randomly generates numbers
-        log.createFile("in", size, randomNumber());
+        log.createFile("in", null, `${size}_numbers`);
+        log.appendFile("in", null, `${size}_numbers`, randomNumber());
         for(let j = 0; j < size - 1; j++){
             numbers.push(randomNumber());
         
             //Writes numbers to file
             if(numbers.length == 10000 || j == size - 2){
-                log.appendFile("in", size, `,${numbers.join(",")}`);
+                log.appendFile("in", null, `${size}_numbers`, `,${numbers.join(",")}`);
                 numbers = [];
             }
         }
@@ -38,27 +39,20 @@ function start(nFiles){
         let end = performance.now();
         let runtime = time.calculate(start, end);
         log.midSort(i, nFiles, runtime, true);
-        log.csv(`${runtime}`);
+        log.csv(runtime);
     }
 
     //Logs data
     let tEnd = performance.now();
     let runtime = time.calculate(tStart, tEnd);
     log.endSort(runtime, true);
-    log.arrays(JSON.stringify(arrays));
+    log.arrays(JSON.stringify(listOfArrays));
     log.csv(`${runtime}\n`);
-}
-
-//Creates directory to store arrays
-function createDirectiory(){
-    if(!fs.existsSync("./input/")){
-        fs.mkdirSync("./input/", {recursive: true});
-    }
 }
 
 //Generates random number
 function randomNumber(){
-    const min = 5;      //included
+    const min = 0;      //included
     const max = 1000;   //excluded
     return Math.floor(Math.random() * (max - min) + min).toString();
 }

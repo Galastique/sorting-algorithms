@@ -7,8 +7,8 @@ function files(){
 }
 
 function cleanArrays(){
-    if(fs.existsSync("./arrays/")){
-        fs.rmSync("./arrays/", { recursive: true, force: true });
+    if(fs.existsSync("./input/")){
+        fs.rmSync("./input/", { recursive: true, force: true });
     }
 }
 
