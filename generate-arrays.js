@@ -1,6 +1,6 @@
 const fs = require('fs');
-const log = require("./logging.js");
-const time = require("./time.js");
+const log = require("./utility/logging.js");
+const time = require("./utility/time.js");
 
 //Generates array to sort
 function start(nFiles){
@@ -23,13 +23,13 @@ function start(nFiles){
         arrays.push(`${size}_numbers.csv`);
 
         //Randomly generates numbers
-        fs.writeFileSync(`./arrays/${size}_numbers.csv`, randomNumber());
+        log.createFile("in", size, randomNumber());
         for(let j = 0; j < size - 1; j++){
             numbers.push(randomNumber());
         
             //Writes numbers to file
             if(numbers.length == 10000 || j == size - 2){
-                fs.appendFileSync(`./arrays/${size}_numbers.csv`, `,${numbers.join(",")}`);
+                log.appendFile("in", size, `,${numbers.join(",")}`);
                 numbers = [];
             }
         }
@@ -51,8 +51,8 @@ function start(nFiles){
 
 //Creates directory to store arrays
 function createDirectiory(){
-    if(!fs.existsSync("./arrays/")){
-        fs.mkdirSync("./arrays/", {recursive: true});
+    if(!fs.existsSync("./input/")){
+        fs.mkdirSync("./input/", {recursive: true});
     }
 }
 
